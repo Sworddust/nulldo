@@ -55,19 +55,22 @@ function mixColor(c1, c2, t) {
 
 function setPalette(mode, progress = 0.5) {
   const day = {
-    bg1: 'eef4f8', bg2: 'e7efe8', bg3: 'f7f2ea', ink: 'rgba(25,34,41,.82)', soft: 'rgba(25,34,41,.42)',
-    a: 'rgba(255,255,255,.66)', b: 'rgba(220,230,241,.48)', c: 'rgba(246,235,220,.56)',
-    center: 'rgba(255,255,255,.2)', textGlow: 'rgba(255,255,255,.14)', track: 'rgba(255,255,255,.32)', line: 'rgba(255,191,107,.58)', dot: 'rgba(255,200,118,.98)'
+    bg1: 'f5f3ef', bg2: 'ebe8e2', bg3: 'f9f6f0', ink: 'rgba(35,30,25,.88)', soft: 'rgba(35,30,25,.45)',
+    a: 'rgba(255,255,255,.72)', b: 'rgba(235,225,210,.45)', c: 'rgba(255,248,235,.5)',
+    center: 'rgba(255,252,245,.25)', textGlow: 'rgba(255,250,240,.18)', track: 'rgba(200,180,155,.25)', line: 'rgba(210,165,100,.55)', dot: 'rgba(225,180,110,.95)',
+    glass: 'rgba(255,255,255,.35)', glassBorder: 'rgba(255,255,255,.5)'
   };
   const dusk = {
-    bg1: 'dce5ef', bg2: 'dde3ea', bg3: 'efe4dc', ink: 'rgba(31,37,43,.84)', soft: 'rgba(31,37,43,.46)',
-    a: 'rgba(255,245,234,.44)', b: 'rgba(205,219,240,.34)', c: 'rgba(245,214,188,.34)',
-    center: 'rgba(255,242,228,.16)', textGlow: 'rgba(255,248,242,.08)', track: 'rgba(255,244,230,.24)', line: 'rgba(255,176,122,.46)', dot: 'rgba(255,190,132,.94)'
+    bg1: 'e8e2da', bg2: 'e0d8cf', bg3: 'f0e6dc', ink: 'rgba(40,32,26,.86)', soft: 'rgba(40,32,26,.48)',
+    a: 'rgba(255,245,230,.48)', b: 'rgba(225,210,190,.38)', c: 'rgba(255,235,210,.42)',
+    center: 'rgba(255,245,230,.2)', textGlow: 'rgba(255,248,235,.12)', track: 'rgba(200,170,140,.28)', line: 'rgba(220,160,95,.52)', dot: 'rgba(235,175,105,.96)',
+    glass: 'rgba(255,252,248,.4)', glassBorder: 'rgba(255,250,245,.55)'
   };
   const night = {
-    bg1: '171f29', bg2: '1e2836', bg3: '253140', ink: 'rgba(236,241,246,.9)', soft: 'rgba(236,241,246,.58)',
-    a: 'rgba(215,225,255,.12)', b: 'rgba(170,191,236,.1)', c: 'rgba(255,240,214,.06)',
-    center: 'rgba(210,222,255,.08)', textGlow: 'rgba(230,238,255,.04)', track: 'rgba(221,232,255,.16)', line: 'rgba(148,171,235,.22)', dot: 'rgba(223,233,255,.96)'
+    bg1: '1a1f28', bg2: '1f2633', bg3: '242d3c', ink: 'rgba(240,245,250,.92)', soft: 'rgba(240,245,250,.55)',
+    a: 'rgba(200,215,245,.1)', b: 'rgba(180,195,225,.08)', c: 'rgba(255,245,220,.05)',
+    center: 'rgba(210,225,255,.06)', textGlow: 'rgba(235,245,255,.05)', track: 'rgba(200,215,240,.14)', line: 'rgba(140,165,220,.2)', dot: 'rgba(225,235,255,.94)',
+    glass: 'rgba(255,255,255,.06)', glassBorder: 'rgba(255,255,255,.1)'
   };
 
   let p = day;
@@ -87,7 +90,9 @@ function setPalette(mode, progress = 0.5) {
       textGlow: dusk.textGlow,
       track: dusk.track,
       line: dusk.line,
-      dot: dusk.dot
+      dot: dusk.dot,
+      glass: dusk.glass,
+      glassBorder: dusk.glassBorder
     };
   }
 
@@ -104,6 +109,12 @@ function setPalette(mode, progress = 0.5) {
   root.style.setProperty('--solar-track', p.track);
   root.style.setProperty('--solar-line', p.line);
   root.style.setProperty('--solar-dot', p.dot);
+  root.style.setProperty('--glass', p.glass);
+  root.style.setProperty('--glass-border', p.glassBorder);
+  
+  // Update theme-color meta tag
+  const themeColor = mode === 'night' ? '#1a1f28' : (mode === 'dusk' ? '#e8e2da' : '#f5f3ef');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor);
 }
 
 function drawSunArc(progress, isNight, moonPhase = 0.5) {
