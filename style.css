@@ -189,26 +189,41 @@ body { position: relative; }
 .ripple {
   position: absolute;
   border-radius: 50%;
-  border: 1px solid var(--ink);
+  border: 1.5px solid var(--ink);
   opacity: 0;
-  animation: rippleExpand 12s ease-out infinite;
+  animation: rippleExpand 10s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
+  box-shadow: 
+    0 0 8px rgba(var(--ink-rgb, 35, 30, 25), 0.04),
+    inset 0 0 20px rgba(255, 255, 255, 0.03);
 }
 
 .ripple-1 {
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   animation-delay: 0s;
 }
 
 .ripple-2 {
-  width: 80px;
-  height: 80px;
-  animation-delay: 4s;
+  width: 60px;
+  height: 60px;
+  animation-delay: 2s;
 }
 
 .ripple-3 {
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
+  animation-delay: 4s;
+}
+
+.ripple-4 {
+  width: 60px;
+  height: 60px;
+  animation-delay: 6s;
+}
+
+.ripple-5 {
+  width: 60px;
+  height: 60px;
   animation-delay: 8s;
 }
 
@@ -216,16 +231,26 @@ body { position: relative; }
   0% {
     transform: scale(1);
     opacity: 0;
+    border-width: 2px;
   }
-  5% {
-    opacity: 0.06;
+  8% {
+    opacity: 0.12;
+  }
+  25% {
+    opacity: 0.09;
+    border-width: 1.5px;
   }
   50% {
+    opacity: 0.06;
+    border-width: 1px;
+  }
+  75% {
     opacity: 0.03;
   }
   100% {
-    transform: scale(12);
+    transform: scale(18);
     opacity: 0;
+    border-width: 0.5px;
   }
 }
 
@@ -239,7 +264,7 @@ body { position: relative; }
   letter-spacing: 0.06em;
   color: var(--ink);
   text-wrap: balance;
-  animation: textWave 12s ease-in-out infinite;
+  animation: textWave 10s ease-in-out infinite;
   text-shadow: 
     0 1px 2px rgba(255,255,255,0.5),
     0 0 40px var(--text-glow);
@@ -251,25 +276,46 @@ body { position: relative; }
   z-index: 1;
 }
 
-/* 文字随波逐流动画 */
+/* 文字随波逐流动画 - 与波纹同步 */
 @keyframes textWave {
-  0%, 100% { 
-    transform: translateY(0px) scale(1); 
-    opacity: 0.92;
+  0% { 
+    transform: translateY(0px) scale(1) rotate(0deg); 
+    opacity: 0.88;
     filter: blur(0px);
   }
+  12% { 
+    transform: translateY(-3px) scale(1.004) rotate(0.15deg); 
+    opacity: 0.92;
+  }
   25% { 
-    transform: translateY(-4px) scale(1.005); 
+    transform: translateY(-6px) scale(1.008) rotate(-0.1deg); 
     opacity: 0.96;
   }
+  37% { 
+    transform: translateY(-8px) scale(1.012) rotate(0.2deg); 
+    opacity: 0.98;
+  }
   50% { 
-    transform: translateY(-7px) scale(1.008); 
+    transform: translateY(-10px) scale(1.015) rotate(0deg); 
     opacity: 1;
-    filter: blur(0.2px);
+    filter: blur(0.15px);
+  }
+  62% { 
+    transform: translateY(-7px) scale(1.01) rotate(-0.15deg); 
+    opacity: 0.97;
   }
   75% { 
-    transform: translateY(-3px) scale(1.003); 
-    opacity: 0.95;
+    transform: translateY(-4px) scale(1.006) rotate(0.1deg); 
+    opacity: 0.94;
+  }
+  87% { 
+    transform: translateY(-2px) scale(1.002) rotate(-0.05deg); 
+    opacity: 0.9;
+  }
+  100% { 
+    transform: translateY(0px) scale(1) rotate(0deg); 
+    opacity: 0.88;
+    filter: blur(0px);
   }
 }
 
@@ -427,15 +473,17 @@ body { position: relative; }
     width: 14px;
     height: 14px;
   }
-  .ripple-1, .ripple-2, .ripple-3 {
-    width: 60px;
-    height: 60px;
+  .ripple-1, .ripple-2, .ripple-3, .ripple-4, .ripple-5 {
+    width: 50px;
+    height: 50px;
   }
   @keyframes rippleExpand {
-    0% { transform: scale(1); opacity: 0; }
-    5% { opacity: 0.05; }
-    50% { opacity: 0.025; }
-    100% { transform: scale(8); opacity: 0; }
+    0% { transform: scale(1); opacity: 0; border-width: 1.5px; }
+    8% { opacity: 0.1; }
+    25% { opacity: 0.07; }
+    50% { opacity: 0.04; border-width: 1px; }
+    75% { opacity: 0.02; }
+    100% { transform: scale(12); opacity: 0; border-width: 0.5px; }
   }
 }
 
@@ -458,7 +506,7 @@ body { position: relative; }
 
 @media (prefers-reduced-motion: reduce) {
   .ambient-a, .ambient-b, .breath, .halo, .line, .ripple { animation: none !important; }
-  .line { transition: none; }
+  .line { transition: none; opacity: 1 !important; }
   .solar, .clock, .mute-btn { transition: none; }
-  .ripple { display: none; }
+  .ripple { opacity: 0 !important; }
 }
