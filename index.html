@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>null.do — today’s pause</title>
+  <meta name="description" content="一个会呼吸的单页。" />
+  <link rel="preconnect" href="https://api.sunrise-sunset.org" />
+  <link rel="preconnect" href="https://ipwho.is" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+  <div class="breath"></div>
+  <div class="halo"></div>
+  <div class="grain"></div>
+  <div class="vignette"></div>
+
+  <header class="tiny solar" aria-label="sun progress">
+    <canvas id="solarCanvas" width="64" height="32"></canvas>
+    <div class="meta">
+      <strong id="solarLabel">loading</strong>
+      <span id="solarTimes">--:-- / --:--</span>
+    </div>
+  </header>
+
+  <main class="center">
+    <p id="line" class="line">先不用解决所有事。</p>
+  </main>
+
+  <footer class="tiny clock" aria-label="local time">
+    <strong id="time">00:00</strong>
+    <span id="date">Mon</span>
+  </footer>
+
+  <script src="./content.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

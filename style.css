@@ -1,0 +1,221 @@
+:root {
+  --bg1: #eef4f8;
+  --bg2: #e7efe8;
+  --bg3: #f7f2ea;
+  --ink: rgba(25, 34, 41, 0.82);
+  --soft: rgba(25, 34, 41, 0.42);
+  --line: rgba(25, 34, 41, 0.12);
+  --ambient-a: rgba(255, 255, 255, 0.66);
+  --ambient-b: rgba(220, 230, 241, 0.48);
+  --ambient-c: rgba(246, 235, 220, 0.56);
+  --center-glow: rgba(255, 255, 255, 0.2);
+  --text-glow: rgba(255, 255, 255, 0.14);
+  --solar-track: rgba(255, 255, 255, 0.32);
+  --solar-line: rgba(255, 191, 107, 0.58);
+  --solar-dot: rgba(255, 200, 118, 0.98);
+  --moon: rgba(228, 237, 255, 0.94);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: linear-gradient(160deg, var(--bg1), var(--bg2) 48%, var(--bg3));
+  color: var(--ink);
+  transition:
+    background 2200ms cubic-bezier(.22,.61,.36,1),
+    color 1400ms ease;
+}
+
+body { position: relative; }
+
+.ambient,
+.breath,
+.grain,
+.vignette,
+.halo {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ambient {
+  inset: -18%;
+  filter: blur(50px);
+  opacity: 0.84;
+  will-change: transform, opacity;
+}
+
+.ambient-a {
+  background:
+    radial-gradient(circle at 20% 26%, var(--ambient-a), transparent 30%),
+    radial-gradient(circle at 73% 69%, var(--ambient-c), transparent 34%),
+    radial-gradient(circle at 70% 20%, var(--ambient-b), transparent 26%);
+  animation: driftA 36s ease-in-out infinite alternate;
+}
+
+.ambient-b {
+  background:
+    radial-gradient(circle at 46% 53%, rgba(255,255,255,0.24), transparent 24%),
+    radial-gradient(circle at 16% 74%, rgba(204, 220, 232, 0.3), transparent 24%),
+    radial-gradient(circle at 82% 18%, rgba(255, 246, 236, 0.22), transparent 22%);
+  animation: driftB 46s ease-in-out infinite alternate;
+}
+
+.breath {
+  background: radial-gradient(circle at center, var(--center-glow), transparent 43%);
+  animation: breathe 8.8s ease-in-out infinite;
+  opacity: 0.78;
+}
+
+.halo {
+  background:
+    radial-gradient(circle at center, rgba(255,255,255,0.12), transparent 28%),
+    radial-gradient(circle at center, rgba(255,255,255,0.06), transparent 48%);
+  animation: haloPulse 12s ease-in-out infinite;
+  opacity: 0.8;
+}
+
+.grain {
+  opacity: 0.06;
+  background-image: radial-gradient(rgba(255,255,255,0.5) 0.6px, transparent 0.85px);
+  background-size: 10px 10px;
+  mix-blend-mode: soft-light;
+}
+
+.vignette {
+  background: radial-gradient(circle at center, transparent 50%, rgba(255,255,255,0.08) 100%);
+}
+
+.tiny {
+  position: fixed;
+  z-index: 3;
+  user-select: none;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.solar {
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--soft);
+  opacity: 0.94;
+}
+
+.solar canvas {
+  width: 64px;
+  height: 32px;
+  display: block;
+  opacity: 0.97;
+  filter: drop-shadow(0 0 8px rgba(255,255,255,0.14));
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.15;
+  font-size: 10px;
+}
+
+.meta strong {
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+}
+
+.center {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  text-align: center;
+}
+
+.line {
+  margin: 0;
+  max-width: min(72vw, 680px);
+  font-size: clamp(24px, 3.1vw, 42px);
+  line-height: 1.52;
+  font-weight: 400;
+  letter-spacing: 0.012em;
+  color: var(--ink);
+  text-wrap: balance;
+  animation: textFloat 11s ease-in-out infinite;
+  text-shadow: 0 0 26px var(--text-glow);
+  transition: opacity 900ms ease, transform 900ms ease, color 1200ms ease;
+}
+
+.line.is-refreshing {
+  opacity: 0.72;
+  transform: translateY(2px);
+}
+
+.clock {
+  right: 20px;
+  bottom: 18px;
+  text-align: right;
+  color: var(--soft);
+  font-size: 12px;
+  line-height: 1.25;
+  opacity: 0.92;
+}
+
+.clock strong {
+  display: block;
+  font-size: 18px;
+  color: var(--ink);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(0.988); opacity: 0.58; }
+  50% { transform: scale(1.05); opacity: 0.92; }
+}
+
+@keyframes haloPulse {
+  0%, 100% { transform: scale(0.98); opacity: 0.62; }
+  50% { transform: scale(1.03); opacity: 0.88; }
+}
+
+@keyframes driftA {
+  0% { transform: translate3d(-1%, 0%, 0) scale(1); }
+  100% { transform: translate3d(2%, -2%, 0) scale(1.06); }
+}
+
+@keyframes driftB {
+  0% { transform: translate3d(0%, 1%, 0) scale(1); }
+  100% { transform: translate3d(-2%, 2%, 0) scale(1.05); }
+}
+
+@keyframes textFloat {
+  0%, 100% { transform: translateY(0px); opacity: 0.93; }
+  50% { transform: translateY(-4px); opacity: 1; }
+}
+
+@media (max-width: 640px) {
+  .solar { top: 16px; left: 16px; gap: 8px; }
+  .solar canvas { width: 56px; height: 28px; }
+  .line {
+    max-width: 84vw;
+    font-size: clamp(20px, 6vw, 31px);
+    line-height: 1.56;
+  }
+  .clock { right: 16px; bottom: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-a, .ambient-b, .breath, .halo, .line { animation: none !important; }
+  .line { transition: none; }
+}
