@@ -322,6 +322,106 @@ function renderSolar(sunrise, sunset) {
   }
 }
 
+// 环境音 - Web Audio API 生成柔和的白噪音/风声
+let audioCtx = null;
+let ambientSource = null;
+let gainNode = null;
+let isMuted = localStorage.getItem('nulldo-muted') === 'true';
+
+function createAmbientSound() {
+  if (audioCtx) return;
+  
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  
+  // 创建柔和的噪音
+  const bufferSize = 2 * audioCtx.sampleRate;
+  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const output = noiseBuffer.getChannelData(0);
+  
+  // 生成粉红噪音 (比白噪音更柔和)
+  let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+  for (let i = 0; i < bufferSize; i++) {
+    const white = Math.random() * 2 - 1;
+    b0 = 0.99886 * b0 + white * 0.0555179;
+    b1 = 0.99332 * b1 + white * 0.0750759;
+    b2 = 0.96900 * b2 + white * 0.1538520;
+    b3 = 0.86650 * b3 + white * 0.3104856;
+    b4 = 0.55000 * b4 + white * 0.5329522;
+    b5 = -0.7616 * b5 - white * 0.0168980;
+    output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
+    b6 = white * 0.115926;
+  }
+  
+  ambientSource = audioCtx.createBufferSource();
+  ambientSource.buffer = noiseBuffer;
+  ambientSource.loop = true;
+  
+  // 低通滤波器使声音更柔和
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = 400;
+  filter.Q.value = 0.5;
+  
+  // 音量控制
+  gainNode = audioCtx.createGain();
+  gainNode.gain.value = isMuted ? 0 : 0.08; // 非常轻的音量
+  
+  ambientSource.connect(filter);
+  filter.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+  
+  ambientSource.start();
+}
+
+function toggleMute() {
+  const muteBtn = document.getElementById('muteBtn');
+  isMuted = !isMuted;
+  localStorage.setItem('nulldo-muted', isMuted);
+  
+  if (muteBtn) {
+    muteBtn.classList.toggle('muted', isMuted);
+  }
+  
+  if (gainNode) {
+    // 平滑过渡音量
+    gainNode.gain.linearRampToValueAtTime(
+      isMuted ? 0 : 0.08,
+      audioCtx.currentTime + 0.5
+    );
+  }
+}
+
+function initAudio() {
+  const muteBtn = document.getElementById('muteBtn');
+  
+  // 设置初始状态
+  if (muteBtn && isMuted) {
+    muteBtn.classList.add('muted');
+  }
+  
+  // 点击静音按钮
+  if (muteBtn) {
+    muteBtn.addEventListener('click', () => {
+      if (!audioCtx) {
+        createAmbientSound();
+      }
+      toggleMute();
+    });
+  }
+  
+  // 用户首次交互时启动音频（浏览器策略要求）
+  const startAudio = () => {
+    if (!audioCtx) {
+      createAmbientSound();
+    }
+    document.removeEventListener('click', startAudio);
+    document.removeEventListener('touchstart', startAudio);
+  };
+  
+  document.addEventListener('click', startAudio, { once: true });
+  document.addEventListener('touchstart', startAudio, { once: true });
+}
+
 async function init() {
   pickLine();
   updateClock();
@@ -348,6 +448,9 @@ async function init() {
     solar = await getSolarTimes();
     renderSolar(solar.sunrise, solar.sunset);
   }, nextMidnight.getTime() - Date.now());
+  
+  // 初始化环境音
+  initAudio();
 }
 
 init();

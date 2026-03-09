@@ -34,6 +34,11 @@
   </header>
 
   <main class="center">
+    <div class="ripple-container">
+      <div class="ripple ripple-1"></div>
+      <div class="ripple ripple-2"></div>
+      <div class="ripple ripple-3"></div>
+    </div>
     <p id="line" class="line">先不用解决所有事。</p>
   </main>
 
@@ -41,6 +46,18 @@
     <strong id="time">00:00</strong>
     <span id="date">Mon</span>
   </footer>
+
+  <button id="muteBtn" class="mute-btn" aria-label="toggle sound" title="toggle ambient sound">
+    <svg class="icon-sound" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+      <path class="sound-wave" d="M15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/>
+    </svg>
+    <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+      <line x1="23" y1="9" x2="17" y2="15"/>
+      <line x1="17" y1="9" x2="23" y2="15"/>
+    </svg>
+  </button>
 
   <script src="./content.js"></script>
   <script src="./app.js"></script>
