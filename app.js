@@ -53,52 +53,133 @@ function mixColor(c1, c2, t) {
   return '#' + a.map((v, i) => Math.round(lerp(v, b[i], t)).toString(16).padStart(2, '0')).join('');
 }
 
-function setPalette(mode, progress = 0.5) {
-  const day = {
-    bg1: 'f5f3ef', bg2: 'ebe8e2', bg3: 'f9f6f0', ink: 'rgba(35,30,25,.88)', soft: 'rgba(35,30,25,.45)',
-    a: 'rgba(255,255,255,.72)', b: 'rgba(235,225,210,.45)', c: 'rgba(255,248,235,.5)',
-    center: 'rgba(255,252,245,.25)', textGlow: 'rgba(255,250,240,.18)', track: 'rgba(200,180,155,.25)', line: 'rgba(210,165,100,.55)', dot: 'rgba(225,180,110,.95)',
-    glass: 'rgba(255,255,255,.35)', glassBorder: 'rgba(255,255,255,.5)'
-  };
-  const dusk = {
-    bg1: 'e8e2da', bg2: 'e0d8cf', bg3: 'f0e6dc', ink: 'rgba(40,32,26,.86)', soft: 'rgba(40,32,26,.48)',
-    a: 'rgba(255,245,230,.48)', b: 'rgba(225,210,190,.38)', c: 'rgba(255,235,210,.42)',
-    center: 'rgba(255,245,230,.2)', textGlow: 'rgba(255,248,235,.12)', track: 'rgba(200,170,140,.28)', line: 'rgba(220,160,95,.52)', dot: 'rgba(235,175,105,.96)',
-    glass: 'rgba(255,252,248,.4)', glassBorder: 'rgba(255,250,245,.55)'
-  };
-  const night = {
+// 多时段调色板：黎明 -> 日出 -> 上午 -> 正午 -> 下午 -> 日落 -> 黄昏 -> 夜晚
+const palettes = {
+  dawn: {      // 黎明 - 柔和的粉紫色
+    bg1: 'e8dfe8', bg2: 'ddd5e0', bg3: 'f0e8ed', ink: 'rgba(45,35,50,.85)', soft: 'rgba(45,35,50,.45)',
+    a: 'rgba(255,235,245,.55)', b: 'rgba(220,200,225,.4)', c: 'rgba(255,230,235,.45)',
+    center: 'rgba(255,240,250,.2)', textGlow: 'rgba(255,235,245,.15)', track: 'rgba(200,170,190,.25)', line: 'rgba(220,150,170,.5)', dot: 'rgba(245,180,190,.95)',
+    glass: 'rgba(255,250,255,.38)', glassBorder: 'rgba(255,245,250,.5)'
+  },
+  sunrise: {   // 日出 - 温暖的橙粉色
+    bg1: 'f5ebe5', bg2: 'efe3da', bg3: 'faf2ea', ink: 'rgba(50,35,25,.88)', soft: 'rgba(50,35,25,.45)',
+    a: 'rgba(255,245,235,.6)', b: 'rgba(255,220,200,.45)', c: 'rgba(255,235,215,.5)',
+    center: 'rgba(255,245,230,.25)', textGlow: 'rgba(255,240,220,.18)', track: 'rgba(220,170,140,.28)', line: 'rgba(240,150,90,.58)', dot: 'rgba(255,170,100,.98)',
+    glass: 'rgba(255,252,248,.4)', glassBorder: 'rgba(255,248,240,.55)'
+  },
+  morning: {   // 上午 - 清新明亮
+    bg1: 'f5f5f0', bg2: 'eef0e8', bg3: 'fafaf5', ink: 'rgba(35,38,32,.88)', soft: 'rgba(35,38,32,.45)',
+    a: 'rgba(255,255,250,.7)', b: 'rgba(235,245,230,.45)', c: 'rgba(250,255,245,.5)',
+    center: 'rgba(255,255,250,.25)', textGlow: 'rgba(255,255,248,.18)', track: 'rgba(180,195,165,.25)', line: 'rgba(190,180,120,.55)', dot: 'rgba(220,200,130,.95)',
+    glass: 'rgba(255,255,255,.38)', glassBorder: 'rgba(255,255,255,.52)'
+  },
+  noon: {      // 正午 - 明亮温暖
+    bg1: 'f8f6f2', bg2: 'f2efe8', bg3: 'fdfbf6', ink: 'rgba(40,35,28,.88)', soft: 'rgba(40,35,28,.45)',
+    a: 'rgba(255,255,255,.72)', b: 'rgba(250,245,235,.48)', c: 'rgba(255,252,245,.52)',
+    center: 'rgba(255,255,250,.28)', textGlow: 'rgba(255,252,245,.2)', track: 'rgba(200,185,160,.25)', line: 'rgba(220,185,120,.55)', dot: 'rgba(240,200,130,.96)',
+    glass: 'rgba(255,255,255,.4)', glassBorder: 'rgba(255,255,255,.55)'
+  },
+  afternoon: { // 下午 - 柔和金色
+    bg1: 'f5f0e8', bg2: 'efe8de', bg3: 'faf5ec', ink: 'rgba(45,38,28,.88)', soft: 'rgba(45,38,28,.45)',
+    a: 'rgba(255,250,240,.65)', b: 'rgba(245,235,215,.45)', c: 'rgba(255,248,230,.5)',
+    center: 'rgba(255,250,235,.25)', textGlow: 'rgba(255,248,230,.18)', track: 'rgba(200,175,145,.26)', line: 'rgba(215,170,105,.55)', dot: 'rgba(235,185,115,.96)',
+    glass: 'rgba(255,252,245,.38)', glassBorder: 'rgba(255,250,242,.52)'
+  },
+  sunset: {    // 日落 - 温暖橙红
+    bg1: 'f0e5dc', bg2: 'e8dcd0', bg3: 'f5ebe0', ink: 'rgba(55,35,25,.88)', soft: 'rgba(55,35,25,.48)',
+    a: 'rgba(255,240,225,.55)', b: 'rgba(250,215,185,.42)', c: 'rgba(255,230,200,.48)',
+    center: 'rgba(255,235,210,.22)', textGlow: 'rgba(255,235,210,.15)', track: 'rgba(210,165,130,.28)', line: 'rgba(235,145,85,.55)', dot: 'rgba(255,160,95,.98)',
+    glass: 'rgba(255,248,240,.42)', glassBorder: 'rgba(255,245,235,.55)'
+  },
+  dusk: {      // 黄昏 - 深紫橙混合
+    bg1: 'ddd5dc', bg2: 'd5ccd5', bg3: 'e5dde2', ink: 'rgba(50,38,45,.86)', soft: 'rgba(50,38,45,.48)',
+    a: 'rgba(245,230,240,.45)', b: 'rgba(225,210,220,.38)', c: 'rgba(255,235,230,.4)',
+    center: 'rgba(245,230,240,.18)', textGlow: 'rgba(245,235,240,.12)', track: 'rgba(180,160,175,.25)', line: 'rgba(200,140,160,.45)', dot: 'rgba(230,170,180,.94)',
+    glass: 'rgba(250,245,250,.35)', glassBorder: 'rgba(245,240,248,.48)'
+  },
+  night: {     // 夜晚 - 深蓝色
     bg1: '1a1f28', bg2: '1f2633', bg3: '242d3c', ink: 'rgba(240,245,250,.92)', soft: 'rgba(240,245,250,.55)',
     a: 'rgba(200,215,245,.1)', b: 'rgba(180,195,225,.08)', c: 'rgba(255,245,220,.05)',
     center: 'rgba(210,225,255,.06)', textGlow: 'rgba(235,245,255,.05)', track: 'rgba(200,215,240,.14)', line: 'rgba(140,165,220,.2)', dot: 'rgba(225,235,255,.94)',
     glass: 'rgba(255,255,255,.06)', glassBorder: 'rgba(255,255,255,.1)'
-  };
-
-  let p = day;
-  if (mode === 'night') p = night;
-  if (mode === 'dusk') {
-    const blend = clamp(progress, 0, 1);
-    p = {
-      bg1: mixColor(day.bg1, dusk.bg1, blend),
-      bg2: mixColor(day.bg2, dusk.bg2, blend),
-      bg3: mixColor(day.bg3, dusk.bg3, blend),
-      ink: dusk.ink,
-      soft: dusk.soft,
-      a: dusk.a,
-      b: dusk.b,
-      c: dusk.c,
-      center: dusk.center,
-      textGlow: dusk.textGlow,
-      track: dusk.track,
-      line: dusk.line,
-      dot: dusk.dot,
-      glass: dusk.glass,
-      glassBorder: dusk.glassBorder
-    };
   }
+};
 
-  root.style.setProperty('--bg1', `#${p.bg1}`);
-  root.style.setProperty('--bg2', `#${p.bg2}`);
-  root.style.setProperty('--bg3', `#${p.bg3}`);
+// 根据太阳进度获取混合的调色板
+function getBlendedPalette(progress, isNight) {
+  if (isNight) return palettes.night;
+  
+  // 定义时段节点: [进度, 调色板名称]
+  const stops = [
+    [0.00, 'dawn'],      // 0% - 日出时刻
+    [0.08, 'sunrise'],   // 8% - 日出后
+    [0.20, 'morning'],   // 20% - 上午
+    [0.45, 'noon'],      // 45% - 正午前后
+    [0.65, 'afternoon'], // 65% - 下午
+    [0.85, 'sunset'],    // 85% - 日落前
+    [0.95, 'dusk'],      // 95% - 黄昏
+    [1.00, 'dusk']       // 100% - 日落时刻
+  ];
+  
+  // 找到当前进度所在的区间
+  let fromStop = stops[0];
+  let toStop = stops[1];
+  
+  for (let i = 0; i < stops.length - 1; i++) {
+    if (progress >= stops[i][0] && progress <= stops[i + 1][0]) {
+      fromStop = stops[i];
+      toStop = stops[i + 1];
+      break;
+    }
+  }
+  
+  // 计算区间内的插值比例
+  const range = toStop[0] - fromStop[0];
+  const t = range > 0 ? (progress - fromStop[0]) / range : 0;
+  const smoothT = t * t * (3 - 2 * t); // smoothstep 平滑过渡
+  
+  const from = palettes[fromStop[1]];
+  const to = palettes[toStop[1]];
+  
+  // 混合两个调色板
+  return {
+    bg1: mixColor(from.bg1, to.bg1, smoothT),
+    bg2: mixColor(from.bg2, to.bg2, smoothT),
+    bg3: mixColor(from.bg3, to.bg3, smoothT),
+    ink: lerpRgba(from.ink, to.ink, smoothT),
+    soft: lerpRgba(from.soft, to.soft, smoothT),
+    a: lerpRgba(from.a, to.a, smoothT),
+    b: lerpRgba(from.b, to.b, smoothT),
+    c: lerpRgba(from.c, to.c, smoothT),
+    center: lerpRgba(from.center, to.center, smoothT),
+    textGlow: lerpRgba(from.textGlow, to.textGlow, smoothT),
+    track: lerpRgba(from.track, to.track, smoothT),
+    line: lerpRgba(from.line, to.line, smoothT),
+    dot: lerpRgba(from.dot, to.dot, smoothT),
+    glass: lerpRgba(from.glass, to.glass, smoothT),
+    glassBorder: lerpRgba(from.glassBorder, to.glassBorder, smoothT)
+  };
+}
+
+// 解析和混合 rgba 颜色
+function lerpRgba(c1, c2, t) {
+  const parse = (c) => {
+    const m = c.match(/rgba?\((\d+),\s*(\d+),\s*(\d+),?\s*([\d.]+)?\)/);
+    if (!m) return [0, 0, 0, 1];
+    return [+m[1], +m[2], +m[3], m[4] !== undefined ? +m[4] : 1];
+  };
+  const a = parse(c1);
+  const b = parse(c2);
+  return `rgba(${Math.round(lerp(a[0], b[0], t))},${Math.round(lerp(a[1], b[1], t))},${Math.round(lerp(a[2], b[2], t))},${lerp(a[3], b[3], t).toFixed(2)})`;
+}
+
+function setPalette(mode, progress = 0.5) {
+  const isNight = mode === 'night';
+  const p = getBlendedPalette(progress, isNight);
+
+  root.style.setProperty('--bg1', p.bg1.startsWith('#') ? p.bg1 : `#${p.bg1}`);
+  root.style.setProperty('--bg2', p.bg2.startsWith('#') ? p.bg2 : `#${p.bg2}`);
+  root.style.setProperty('--bg3', p.bg3.startsWith('#') ? p.bg3 : `#${p.bg3}`);
   root.style.setProperty('--ink', p.ink);
   root.style.setProperty('--soft', p.soft);
   root.style.setProperty('--ambient-a', p.a);
@@ -113,8 +194,8 @@ function setPalette(mode, progress = 0.5) {
   root.style.setProperty('--glass-border', p.glassBorder);
   
   // Update theme-color meta tag
-  const themeColor = mode === 'night' ? '#1a1f28' : (mode === 'dusk' ? '#e8e2da' : '#f5f3ef');
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor);
+  const bg1 = p.bg1.startsWith('#') ? p.bg1 : `#${p.bg1}`;
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', bg1);
 }
 
 function drawSunArc(progress, isNight, moonPhase = 0.5) {
@@ -231,18 +312,13 @@ function renderSolar(sunrise, sunset) {
     drawSunArc(progress, false);
     solarLabel.textContent = 'sun';
     solarTimes.textContent = `${fmt(sunrise)} / ${fmt(sunset)}`;
-
-    const duskEdge = Math.min(progress, 1 - progress);
-    if (duskEdge < 0.18) {
-      setPalette('dusk', 1 - duskEdge / 0.18);
-    } else {
-      setPalette('day', progress);
-    }
+    // 根据太阳进度动态更新背景颜色
+    setPalette('day', progress);
   } else {
     drawSunArc(0, true, approxMoonPhase(now));
     solarLabel.textContent = 'moon';
     solarTimes.textContent = `${fmt(sunrise)} / ${fmt(sunset)}`;
-    setPalette('night');
+    setPalette('night', 0);
   }
 }
 
