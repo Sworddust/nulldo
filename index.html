@@ -13,6 +13,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://api.sunrise-sunset.org" />
   <link rel="preconnect" href="https://ipwho.is" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Inter:wght@300;400;500&display=block" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Inter:wght@300;400;500&display=block" />
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
@@ -42,5 +44,18 @@
 
   <script src="./content.js"></script>
   <script src="./app.js"></script>
+  <script>
+    // 检测字体加载完成后再显示文字，避免闪烁
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        document.documentElement.classList.add('fonts-loaded');
+      });
+    } else {
+      // 后备方案：延迟显示
+      setTimeout(() => {
+        document.documentElement.classList.add('fonts-loaded');
+      }, 300);
+    }
+  </script>
 </body>
 </html>
