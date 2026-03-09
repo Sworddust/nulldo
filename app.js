@@ -251,8 +251,18 @@ async function init() {
   updateClock();
   setInterval(updateClock, 1000);
 
-  let solar = await getSolarTimes();
+  // 立即用默认值渲染，不阻塞
+  let solar = fallbackSolar();
   renderSolar(solar.sunrise, solar.sunset);
+  
+  // 异步获取真实数据后更新
+  getSolarTimes().then(realSolar => {
+    if (realSolar.source !== 'fallback') {
+      solar = realSolar;
+      renderSolar(solar.sunrise, solar.sunset);
+    }
+  });
+  
   setInterval(() => renderSolar(solar.sunrise, solar.sunset), 60 * 1000);
 
   const nextMidnight = new Date();
