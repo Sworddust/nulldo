@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500&family=Inter:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Inter:wght@300;400;500&display=swap');
 
 :root {
   --bg1: #f5f3ef;
@@ -170,11 +170,11 @@ body { position: relative; }
 .line {
   margin: 0;
   max-width: min(68vw, 720px);
-  font-family: 'Noto Serif SC', 'PingFang SC', serif;
-  font-size: clamp(26px, 3.5vw, 48px);
-  line-height: 1.65;
-  font-weight: 300;
-  letter-spacing: 0.04em;
+  font-family: 'Ma Shan Zheng', 'STXingkai', 'KaiTi', cursive;
+  font-size: clamp(28px, 4vw, 54px);
+  line-height: 1.75;
+  font-weight: 400;
+  letter-spacing: 0.06em;
   color: var(--ink);
   text-wrap: balance;
   animation: textFloat 13s ease-in-out infinite;
